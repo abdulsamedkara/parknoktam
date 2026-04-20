@@ -55,9 +55,19 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
     try {
-      toast.success("Hoş geldiniz!");
-      router.push("/ana-sayfa");
+      const res = await signIn("credentials", { redirect: false, email, password });
+      if (res?.error) {
+        toast.error("Geçersiz e-posta veya şifre.");
+      } else {
+        toast.success("Hoş geldiniz!");
+        router.push("/ana-sayfa");
+        router.refresh();
+      }
     } catch {
       toast.error("Bir hata oluştu.");
     } finally {
