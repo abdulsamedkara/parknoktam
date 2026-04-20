@@ -1,17 +1,7 @@
-import { withAuth } from "next-auth/middleware";
-
-export default withAuth({
-  pages: {
-    signIn: "/giris",
-  },
-});
+// Auth middleware devre dışı - JWT cookie Vercel ortamında çalışmıyor
+// Koruma her sayfanın kendi useSession() kontrolüyle yapılıyor
+export default function middleware() {}
 
 export const config = {
-  // korumalı rotalar. Sadece giriş yapmış kullanıcılar girebilir.
-  matcher: [
-    "/ara/:path*",
-    "/sonuclar/:path*",
-    "/profil/:path*",
-    "/rezervasyonlar/:path*",
-  ],
+  matcher: [],
 };
