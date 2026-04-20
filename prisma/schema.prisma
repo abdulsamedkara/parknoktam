@@ -1,0 +1,203 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  password     String
+  phone        String
+  tcKimlik     String
+  birthDate    DateTime
+  gender       String   // "erkek" | "kadin"
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Sürücü olarak yaptığı rezervasyonlar
+  reservations Reservation[]
+  // Sahip olduğu park alanları
+  spots        ParkingSpot[]
+  // Favori alanlar
+  favorites    Favorite[]
+  // Kredi bakiyesi (1 Kredi = 1 TL)
+  creditBalance Int @default(0)
+  // Kullanıcının kayıtlı araçları
+  vehicles     Vehicle[]
+  // Kredi hareketleri
+  credits      Credit[]
+  // Kaydedilmiş ödeme kartları
+  savedCards   SavedCard[]
+  // E-Devlet doğrulama
+  eDevletVerified Boolean @default(false)
+}
+
+model ParkingSpot {
+  id            String   @id @default(cuid())
+  ownerId       String
+  owner         User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  title         String
+  description   String?
+  address       String
+  lat           Float
+  lng           Float
+
+  // Kategori: bireysel | isletme | site | belediye
+  category      String   @default("bireysel")
+  // Tip: acik | kapali
+  spotType      String   @default("acik")
+
+  pricePerHour  Float
+  isActive      Boolean  @default(true)
+  totalCapacity Int      @default(1) // Toplam kaç araç otoparka sığabilir
+
+  // Özellikler
+  hasCCTV       Boolean  @default(false)
+  hasEVCharger  Boolean  @default(false)
+  isHandicapped Boolean  @default(false)
+
+  // Uygunluk saatleri (HH:MM formatı)
+  openTime      String   @default("00:00")
+  closeTime     String   @default("23:59")
+
+  // Fotoğraf URL'leri (JSON array string olarak)
+  photos        String   @default("[]")
+
+  // Anketlerden hesaplanan skorlar
+  rating           Float @default(0)
+  reviewCount      Int   @default(0)
+  occupancyRate    Float @default(0)
+  sunExposureScore Float @default(0)
+  dustScore        Float @default(0)
+  moistureScore    Float @default(0)
+  accessEaseScore  Float @default(0)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  reservations  Reservation[]
+  favorites     Favorite[]
+}
+
+model Reservation {
+  id            String   @id @default(cuid())
+  spotId        String
+  spot          ParkingSpot @relation(fields: [spotId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  vehiclePlate  String
+  vehicleModel  String
+
+  startDateTime DateTime
+  endDateTime   DateTime
+  totalPrice    Float
+
+  // PENDING | CONFIRMED | ACTIVE | COMPLETED | CANCELLED
+  status        String   @default("CONFIRMED")
+
+  qrCode        String?
+
+  payment       Payment?
+  surveys       Survey[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Payment {
+  id             String      @id @default(cuid())
+  reservationId  String      @unique
+  reservation    Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+
+  amount         Float
+  // CARD_CREDIT | CARD_DEBIT
+  method         String   @default("CARD_CREDIT")
+  cardLast4      String?
+
+  // SUCCESS | PENDING | FAILED (simülasyon için hep SUCCESS)
+  status         String   @default("SUCCESS")
+
+  createdAt      DateTime @default(now())
+}
+
+model Favorite {
+  id      String      @id @default(cuid())
+  userId  String
+  user    User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  spotId  String
+  spot    ParkingSpot @relation(fields: [spotId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, spotId])
+}
+
+model Survey {
+  id               String   @id @default(cuid())
+  reservationId    String
+  reservation      Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  filledBy         String   // "tenant" | "owner"
+  userId           String
+  
+  // Kiracı anket alanları
+  overallRating    Int?     // 1-5
+  hadSunExposure   Boolean?
+  hadDustIssue     Boolean?
+  hadMoistureIssue Boolean?
+  easyAccess       Boolean?
+  feltSafe         Boolean?
+  comment          String?
+  
+  // Sahip anket alanları
+  tenantBehavior   Int?     // 1-5
+  leftClean        Boolean?
+  
+  creditAwarded    Boolean  @default(false)
+  creditAmount     Int      @default(0) // Default 0 as per logic, we will assign 20 in API
+  
+  createdAt        DateTime @default(now())
+}
+
+model Credit {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount        Int      // + kazanılan, - harcanan
+  reason        String   // "survey_reward" | "used_in_reservation"
+  reservationId String?
+  createdAt     DateTime @default(now())
+}
+
+model Vehicle {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plate     String
+
+  brand     String?  // Örn: BMW, Mercedes, vs.
+  model     String
+  color     String?  // Örn: Siyah, Beyaz
+  type      String?  // Örn: Sedan, SUV, Hatchback
+
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model SavedCard {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cardName  String
+  last4     String
+  expiry    String
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

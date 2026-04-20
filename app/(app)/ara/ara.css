@@ -1,0 +1,461 @@
+/* TikTok Style Map Layout */
+
+.tiktok-layout {
+  position: relative;
+  height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Map takes upper half natively, smooth transition to full */
+.tiktok-map-container {
+  position: relative;
+  width: 100%;
+  z-index: 10;
+  flex-shrink: 0;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08); /* slight shadow over bottom panel */
+}
+
+.tiktok-map-container .leaflet-container {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.tiktok-map-header {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  z-index: 400; /* above leaflet */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+}
+
+.tiktok-map-header > * {
+  pointer-events: auto;
+}
+
+.logo-bubble {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 8px 16px;
+  border-radius: 100px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-family: 'Manrope', sans-serif;
+  font-size: 1.1rem;
+}
+
+.toggle-fullscreen-btn {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  color: #0f172a;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.toggle-fullscreen-btn:active {
+  transform: scale(0.9);
+}
+
+.map-crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  z-index: 400;
+  color: #0A66C2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  animation: dropIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.map-crosshair svg {
+  width: 32px;
+  height: 32px;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+}
+
+.crosshair-dot {
+  width: 6px;
+  height: 6px;
+  background: #0A66C2;
+  border-radius: 50%;
+  margin-top: 2px;
+  box-shadow: 0 0 0 2px white;
+}
+
+@keyframes dropIn {
+  0% { transform: translate(-50%, -150%); opacity: 0; }
+  100% { transform: translate(-50%, -100%); opacity: 1; }
+}
+
+/* Bottom Panel Wrapper */
+.tiktok-bottom-panel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50dvh; /* slightly overlaps due to map being 55vh optionally, wait, map is 55, bottom is 45? Let's make it cover remaining space */
+  height: calc(100dvh - 55dvh + 20px); /* overlap */
+  background: #ffffff;
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  z-index: 20;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+}
+
+/* The drag handle */
+.drag-handle-wrap {
+  width: 100%;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.drag-handle {
+  width: 40px;
+  height: 5px;
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+/* Search Tabs */
+.search-tabs {
+  display: flex;
+  padding: 0 16px;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.src-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 0;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.src-tab.active {
+  background: #0A66C2;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(10, 102, 194, 0.2);
+}
+
+.panel-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 100px; /* space for bottom nav */
+}
+
+/* Hide scrollbar functionally */
+.custom-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.custom-scrollbar {
+  -ms-overflow-style: none;  
+  scrollbar-width: none;  
+}
+
+.search-mode-content {
+  padding: 0 16px 16px;
+}
+
+.search-input-box {
+  display: flex;
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 12px 14px;
+  gap: 10px;
+}
+
+.search-input-box svg {
+  color: #94a3b8;
+}
+
+.search-input-box input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: #0f172a;
+  font-weight: 500;
+}
+
+.clear-btn {
+  background: #cbd5e1;
+  color: white;
+  border: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.search-info-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #eff6ff;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #bfdbfe;
+}
+.search-info-box .icon {
+  font-size: 24px;
+}
+.search-info-box h4 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  margin-bottom: 2px;
+}
+.search-info-box p {
+  font-size: 0.75rem;
+  color: #3b82f6;
+  line-height: 1.2;
+}
+
+.popular-grid {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+.popular-grid::-webkit-scrollbar { display: none; }
+
+.popular-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  padding: 10px 16px;
+  border-radius: 16px;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  cursor: pointer;
+}
+.popular-btn .pop-icon { font-size: 18px; }
+.popular-btn .pop-name { font-size: 0.85rem; font-weight: 600; color: #334155; }
+
+/* Filters Row */
+.filters-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px 16px;
+  overflow-x: auto;
+}
+.filters-row::-webkit-scrollbar { display: none; }
+
+.filter-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.filter-chip {
+  background: white;
+  border: 1px solid #e2e8f0;
+  padding: 6px 12px;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #475569;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.filter-chip.active {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #1d4ed8;
+}
+
+/* Spots Carousel */
+.spots-carousel-wrap {
+  padding-left: 16px;
+}
+
+.section-title {
+  font-family: 'Manrope', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 12px;
+}
+
+.spots-carousel {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+  scroll-snap-type: x mandatory;
+}
+.spots-carousel.hide-scrollbar::-webkit-scrollbar { display: none; }
+
+.carousel-item {
+  scroll-snap-align: center;
+  flex: 0 0 85%;
+  position: relative;
+}
+@media (min-width: 600px) {
+  .carousel-item { flex: 0 0 300px; }
+}
+
+.carousel-item-pad {
+  flex: 0 0 16px;
+}
+
+.tiktok-spot-card {
+  background: white;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+.tiktok-spot-card.active {
+  border-color: #0A66C2;
+  box-shadow: 0 0 0 2px rgba(10,102,194,0.1), 0 8px 24px rgba(10,102,194,0.15);
+}
+
+.tiktok-spot-img {
+  width: 100%;
+  height: 140px;
+  position: relative;
+}
+.tiktok-spot-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.tiktok-spot-price-badge {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(4px);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 800;
+  color: #0f172a;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.tiktok-spot-content {
+  padding: 12px 14px;
+}
+
+.tiktok-spot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 4px;
+}
+
+.tiktok-spot-header h3 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1rem;
+  color: #0f172a;
+}
+.tiktok-spot-rating {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: #0f172a;
+}
+.tiktok-spot-rating svg { color: #FFB703; }
+
+.tiktok-spot-address {
+  font-size: 0.75rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.tiktok-spot-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tiktok-spot-badges .badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+.badge.safe { background: #f0fdf4; color: #16a34a; }
+.badge.type { background: #eff6ff; color: #2563eb; }
+.badge.ev   { background: #fffbeb; color: #d97706; }
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fixed-rent-btn {
+  display: block;
+  margin-top: 12px;
+  background: #0A66C2;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 12px rgba(10,102,194,0.3);
+}

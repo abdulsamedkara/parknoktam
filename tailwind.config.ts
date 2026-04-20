@@ -1,0 +1,70 @@
+import type { Config } from "tailwindcss";
+
+const config: Config = {
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "inverse-surface": "#2e3034",
+        "on-error": "#ffffff",
+        "on-surface-variant": "#414755",
+        "surface-variant": "#e2e2e7",
+        "on-tertiary-container": "#fffbff",
+        "tertiary": "#9e3d00",
+        "secondary-fixed": "#d3e3ff",
+        "on-secondary": "#ffffff",
+        "secondary": "#4f5f77",
+        "surface-container": "#ededf2",
+        "on-background": "#1a1c1f",
+        "surface": "#f9f9fe",
+        "on-primary-container": "#fefcff",
+        "inverse-primary": "#adc6ff",
+        "tertiary-fixed-dim": "#ffb595",
+        "on-surface": "#1a1c1f",
+        "background": "#f9f9fe",
+        "on-secondary-container": "#54647c",
+        "inverse-on-surface": "#f0f0f5",
+        "secondary-container": "#d0e1fd",
+        "surface-tint": "#005bc1",
+        "primary-fixed": "#d8e2ff",
+        "on-primary": "#ffffff",
+        "on-secondary-fixed": "#0b1c31",
+        "primary-container": "#0070eb",
+        "on-secondary-fixed-variant": "#38485e",
+        "tertiary-container": "#c64f00",
+        "surface-container-high": "#e8e8ed",
+        "surface-container-low": "#f3f3f8",
+        "error": "#ba1a1a",
+        "on-primary-fixed": "#001a41",
+        "surface-container-lowest": "#ffffff",
+        "on-tertiary": "#ffffff",
+        "on-primary-fixed-variant": "#004493",
+        "primary": "#0058bc",
+        "surface-bright": "#f9f9fe",
+        "secondary-fixed-dim": "#b7c7e3",
+        "outline-variant": "#c1c6d7",
+        "surface-dim": "#d9dade",
+        "outline": "#717786",
+        "primary-fixed-dim": "#adc6ff",
+        "tertiary-fixed": "#ffdbcc",
+        "on-tertiary-fixed-variant": "#7c2e00",
+        "on-tertiary-fixed": "#351000",
+        "surface-container-highest": "#e2e2e7",
+        "error-container": "#ffdad6",
+        "on-error-container": "#93000a"
+      },
+      fontFamily: {
+        headline: ["Manrope", "sans-serif"],
+        body: ["Inter", "sans-serif"],
+        label: ["Inter", "sans-serif"]
+      }
+    },
+  },
+  plugins: [],
+};
+export default config;

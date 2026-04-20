@@ -1,0 +1,286 @@
+/* Park Detail Page Styling */
+
+.detail-page {
+  background: #f8fafc;
+  min-height: 100dvh;
+  padding-bottom: 170px;
+}
+
+.detail-gallery {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  background: #1e293b;
+}
+
+.detail-gallery img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.top-bar-overlay {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+}
+
+.back-btn {
+  background: rgba(255, 255, 255, 0.90);
+  backdrop-filter: blur(8px);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  color: #0f172a;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.fav-btn {
+  background: rgba(239, 68, 68, 0.15);
+  backdrop-filter: blur(8px);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid rgba(239, 68, 68, 0.35);
+  color: #ef4444;
+  box-shadow: 0 4px 16px rgba(239,68,68,0.20);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.fav-btn:active {
+  transform: scale(0.88);
+  background: rgba(239, 68, 68, 0.25);
+}
+
+.fav-btn.active {
+  background: rgba(239, 68, 68, 0.90);
+  color: white;
+}
+
+.detail-content {
+  padding: 24px 20px;
+  background: #ffffff;
+  border-radius: 32px 32px 0 0;
+  margin-top: -32px;
+  position: relative;
+  z-index: 20;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.detail-title {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.detail-address {
+  font-size: 0.85rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.detail-price-box {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 16px;
+  padding: 10px 14px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-price-box .val {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: #1d4ed8;
+}
+
+.detail-price-box .unit {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #3b82f6;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Quality Stats Section */
+.quality-section {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 16px;
+  margin: 20px 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+}
+
+.quality-title {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: #0f172a;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quality-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.q-card {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.q-card-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #475569;
+}
+
+.q-card-val {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.q-stars {
+  color: #eab308;
+  letter-spacing: 2px;
+  font-size: 0.9rem;
+}
+
+/* Features Array */
+.features-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.f-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f1f5f9;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+}
+
+/* Availability Calendar Mock */
+.av-card {
+  background: #fdfdfd;
+  border: 1px dashed #cbd5e1;
+  border-radius: 16px;
+  padding: 16px;
+  background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.01) 10px, rgba(0,0,0,0.01) 20px);
+}
+
+.av-card-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 12px;
+}
+
+.av-hours-bar {
+  display: flex;
+  width: 100%;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.av-hours-bar .block {
+  height: 100%;
+}
+.av-hours-bar .block.avail { background: #22c55e; }
+.av-hours-bar .block.booked { background: #ef4444; }
+
+.av-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+/* Fixed Bottom Action */
+.action-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  padding: 16px 20px 32px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  z-index: 1500;
+}
+
+.rent-btn {
+  width: 100%;
+  background: #0A66C2;
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 16px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.05rem;
+  box-shadow: 0 8px 24px rgba(10,102,194,0.3);
+  text-align: center;
+  text-decoration: none;
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .detail-gallery { height: 400px; }
+  .detail-content { max-width: 800px; margin-left: auto; margin-right: auto; }
+  .action-footer { max-width: 800px; margin: 0 auto; left: 0; right: 0; border-radius: 24px 24px 0 0; padding-bottom: 16px; }
+}
