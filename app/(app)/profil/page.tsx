@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 interface SavedCard {
@@ -63,7 +64,18 @@ export default function ProfilPage() {
   const [cardForm, setCardForm] = useState({ cardName: "", cardNumber: "", expiry: "" });
   const [savingCard, setSavingCard] = useState(false);
 
+
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
   useEffect(() => {
+    if (status === "unauthenticated") {
+      router.replace("/giris");
+    }
+  }, [status, router]);
+
+  useEffect(() => {
+    if (status !== "authenticated") return;
     Promise.all([
       fetch("/api/user/credits").then(res => res.json()),
       fetch("/api/user/vehicles").then(res => res.json()),
@@ -76,7 +88,7 @@ export default function ProfilPage() {
       setCards(Array.isArray(cardsData) ? cardsData : []);
       setLoading(false);
     }).catch(() => setLoading(false));
-  }, []);
+  }, [status]);
 
   const handleSaveVehicle = async () => {
     if (!vehicleForm.plate || !vehicleForm.model) return toast.error("Lütfen plaka ve model giriniz.");
@@ -220,7 +232,7 @@ export default function ProfilPage() {
           <h1 className="font-black text-slate-800 text-2xl mb-0.5">Profil</h1>
           <p className="text-slate-400 text-sm">Hesabını ve varlıklarını yönet</p>
         </div>
-        <button onClick={() => signOut({ callbackUrl: '/' })} className="w-10 h-10 rounded-full bg-red-50 text-red-500 flex items-center justify-center active:scale-95 transition-transform" title="Sistemden Çıkış Yap">
+        <button onClick={() => signOut({ callbackUrl: '/giris' })} className="w-10 h-10 rounded-full bg-red-50 text-red-500 flex items-center justify-center active:scale-95 transition-transform" title="Sistemden Çıkış Yap">
           <span className="material-symbols-outlined text-[20px] font-bold">logout</span>
         </button>
       </div>
