@@ -110,7 +110,7 @@ export default function MapView({ spots, activeSpotId, onMarkerClick }: MapViewP
     if (mapRef.current) return;
 
     const map = L.map(containerRef.current, {
-      center: [41.015, 28.979],
+      center: [41.0201, 40.5234], // Rize Merkez
       zoom: 12,
       zoomControl: false,
     });

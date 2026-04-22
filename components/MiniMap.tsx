@@ -42,8 +42,8 @@ export default function MiniMap() {
 
     if (mapRef.current) return;
 
-    // Use a fixed location or generic Istanbul location for the preview
-    const center: [number, number] = [41.015, 28.979];
+    // Rize merkez koordinatları
+    const center: [number, number] = [41.0201, 40.5234];
 
     const map = L.map(containerRef.current, {
       center: center,

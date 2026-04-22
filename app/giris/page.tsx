@@ -65,8 +65,7 @@ export default function LoginPage() {
         toast.error("Geçersiz e-posta veya şifre.");
       } else {
         toast.success("Hoş geldiniz!");
-        router.push("/ana-sayfa");
-        router.refresh();
+        router.push("/hosgeldin");
       }
     } catch {
       toast.error("Bir hata oluştu.");
