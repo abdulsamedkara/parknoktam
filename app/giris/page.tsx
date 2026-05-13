@@ -105,7 +105,7 @@ export default function LoginPage() {
               <label className="input-label">E-Posta</label>
               <div className="input-wrapper">
                 <span className="input-icon"><IconMail /></span>
-                <input name="email" type="email" required placeholder="ornek@mail.com" className="auth-input" />
+                <input name="email" type="email" required defaultValue="owner@parknoktam.com" placeholder="ornek@mail.com" className="auth-input" />
               </div>
             </div>
 
@@ -113,7 +113,7 @@ export default function LoginPage() {
               <label className="input-label">Şifre</label>
               <div className="input-wrapper">
                 <span className="input-icon"><IconLock /></span>
-                <input name="password" type="password" required placeholder="••••••••" className="auth-input" />
+                <input name="password" type="password" required defaultValue="123456" placeholder="••••••••" className="auth-input" />
               </div>
             </div>
 

@@ -22,6 +22,20 @@ async function main() {
     },
   });
 
+  const demoUser = await prisma.user.upsert({
+    where: { email: "demo@parknoktam.com" },
+    update: {},
+    create: {
+      name: "Demo Kullanıcı",
+      email: "demo@parknoktam.com",
+      password: hashedPassword,
+      phone: "+905559876543",
+      tcKimlik: "10987654321",
+      birthDate: new Date("1995-05-05"),
+      gender: "kadin",
+    },
+  });
+
   const generatePhotoArr = () => JSON.stringify(["https://images.unsplash.com/photo-1590674899484-d5640e854abe?auto=format&fit=crop&q=80&w=400"]);
 
   const spotsData = [
@@ -130,7 +144,10 @@ async function main() {
   ];
 
 
-  for (const spot of spotsData) {
+  for (let i = 0; i < spotsData.length; i++) {
+    const spot = spotsData[i];
+    const targetOwnerId = i < 2 ? owner.id : demoUser.id;
+
     const existing = await prisma.parkingSpot.findFirst({
       where: { title: spot.title }
     });
@@ -139,7 +156,7 @@ async function main() {
       await prisma.parkingSpot.create({
         data: {
           ...spot,
-          ownerId: owner.id,
+          ownerId: targetOwnerId,
         }
       });
       console.log(`Created spot: ${spot.title}`);
@@ -154,6 +171,7 @@ async function main() {
           hasGuard: spot.hasGuard,
           rating: spot.rating,
           reviewCount: spot.reviewCount,
+          ownerId: targetOwnerId,
         }
       });
       console.log(`Updated spot: ${spot.title}`);
