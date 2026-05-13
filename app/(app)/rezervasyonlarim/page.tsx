@@ -341,7 +341,7 @@ export default function RezervasyonlarimPage() {
         )}
 
         {!loading && tabData[tab].map(r => (
-          <RezervasjonCard key={r.id} r={r} />
+          <RezervasjonCard key={r.id} r={r} onRefresh={loadData} />
         ))}
       </div>
     </div>
