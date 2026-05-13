@@ -31,6 +31,7 @@ interface Spot {
   address: string;
   isActive: boolean;
   pricePerHour: number;
+  photos?: string;
   stats: {
     revenue: number;
     reservationCount: number;
