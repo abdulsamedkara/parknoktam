@@ -15,7 +15,8 @@ export async function POST(req: Request) {
   const body = await req.json();
   const { 
     reservationId, overallRating, hadSunExposure, 
-    hadDustIssue, hadMoistureIssue, easyAccess, feltSafe, comment 
+    hadDustIssue, hadMoistureIssue, easyAccess, feltSafe, comment,
+    filledBy = "tenant", tenantBehavior, leftClean
   } = body;
 
   if (!reservationId) {
@@ -31,11 +32,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Rezervasyon bulunamadı" }, { status: 404 });
   }
 
-  // Kullanıcı zaten bu rezervasyon için 'tenant' olarak anket doldurmuş mu?
+  // Kullanıcı zaten bu rol için anket doldurmuş mu?
   const existingSurvey = await prisma.survey.findFirst({
     where: {
       reservationId,
-      filledBy: "tenant",
+      filledBy,
     }
   });
 
@@ -43,26 +44,34 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Bu rezervasyon için zaten anket doldurulmuş" }, { status: 400 });
   }
 
-  // Transaction ile hem Survey oluştur, hem Kredi ekle, hem de user kredi bakiyesini artır
-  const REWARD_AMOUNT = 20;
+  // Sahip için kredi ödülü daha düşük olabilir (örneğin 10)
+  const REWARD_AMOUNT = filledBy === "owner" ? 10 : 20;
 
   const result = await prisma.$transaction(async (tx) => {
     // 1. Survey kaydı ekle
+    const surveyData: any = {
+      reservationId,
+      filledBy,
+      userId: user.id,
+      comment,
+      creditAwarded: true,
+      creditAmount: REWARD_AMOUNT,
+    };
+
+    if (filledBy === "tenant") {
+      surveyData.overallRating = overallRating;
+      surveyData.hadSunExposure = hadSunExposure;
+      surveyData.hadDustIssue = hadDustIssue;
+      surveyData.hadMoistureIssue = hadMoistureIssue;
+      surveyData.easyAccess = easyAccess;
+      surveyData.feltSafe = feltSafe;
+    } else {
+      surveyData.tenantBehavior = tenantBehavior;
+      surveyData.leftClean = leftClean;
+    }
+
     const survey = await tx.survey.create({
-      data: {
-        reservationId,
-        filledBy: "tenant",
-        userId: user.id,
-        overallRating,
-        hadSunExposure,
-        hadDustIssue,
-        hadMoistureIssue,
-        easyAccess,
-        feltSafe,
-        comment,
-        creditAwarded: true,
-        creditAmount: REWARD_AMOUNT,
-      }
+      data: surveyData
     });
 
     // 2. Kredi geçimişine log at
@@ -81,34 +90,36 @@ export async function POST(req: Request) {
       data: { creditBalance: { increment: REWARD_AMOUNT } }
     });
 
-    // 4. ParkingSpot kalite skorlarını tüm anketlerden yeniden hesapla
-    const allSurveys = await tx.survey.findMany({
-      where: { reservation: { spotId: reservation.spotId }, filledBy: "tenant" },
-    });
-
-    const count = allSurveys.length;
-    if (count > 0) {
-      const avg = (arr: (number | boolean | null | undefined)[]) => {
-        const nums = arr.filter((x): x is number => typeof x === "number" && !isNaN(x));
-        return nums.length ? nums.reduce((a, b) => a + b, 0) / nums.length : 0;
-      };
-      const boolAvg = (arr: (boolean | null | undefined)[]) => {
-        const vals = arr.filter((x): x is boolean => typeof x === "boolean");
-        return vals.length ? vals.filter(Boolean).length / vals.length : 0;
-      };
-
-      await tx.parkingSpot.update({
-        where: { id: reservation.spotId },
-        data: {
-          rating:           avg(allSurveys.map(s => s.overallRating)),
-          reviewCount:      count,
-          sunExposureScore: boolAvg(allSurveys.map(s => s.hadSunExposure)),
-          dustScore:        boolAvg(allSurveys.map(s => s.hadDustIssue)),
-          moistureScore:    boolAvg(allSurveys.map(s => s.hadMoistureIssue)),
-          accessEaseScore:  boolAvg(allSurveys.map(s => s.easyAccess)),
-          occupancyRate:    0, // Ayrıca hesaplanabilir
-        },
+    // 4. ParkingSpot kalite skorlarını tüm anketlerden yeniden hesapla (Sadece tenant anketleri)
+    if (filledBy === "tenant") {
+      const allSurveys = await tx.survey.findMany({
+        where: { reservation: { spotId: reservation.spotId }, filledBy: "tenant" },
       });
+
+      const count = allSurveys.length;
+      if (count > 0) {
+        const avg = (arr: (number | boolean | null | undefined)[]) => {
+          const nums = arr.filter((x): x is number => typeof x === "number" && !isNaN(x));
+          return nums.length ? nums.reduce((a, b) => a + b, 0) / nums.length : 0;
+        };
+        const boolAvg = (arr: (boolean | null | undefined)[]) => {
+          const vals = arr.filter((x): x is boolean => typeof x === "boolean");
+          return vals.length ? vals.filter(Boolean).length / vals.length : 0;
+        };
+
+        await tx.parkingSpot.update({
+          where: { id: reservation.spotId },
+          data: {
+            rating: avg(allSurveys.map(s => s.overallRating)),
+            reviewCount: count,
+            sunExposureScore: boolAvg(allSurveys.map(s => s.hadSunExposure)),
+            dustScore: boolAvg(allSurveys.map(s => s.hadDustIssue)),
+            moistureScore: boolAvg(allSurveys.map(s => s.hadMoistureIssue)),
+            accessEaseScore: boolAvg(allSurveys.map(s => s.easyAccess)),
+            occupancyRate: 0, // Ayrıca hesaplanabilir
+          },
+        });
+      }
     }
 
     return survey;

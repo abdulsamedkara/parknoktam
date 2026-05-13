@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface Rezervasyon {
   id: string;
@@ -15,6 +16,7 @@ interface Rezervasyon {
     title: string;
     address: string;
     photos: string;
+    pricePerHour?: number;
   };
   payment: { status: string } | null;
   surveys?: { id: string }[];
@@ -36,35 +38,68 @@ function formatDate(iso: string) {
   });
 }
 
-function RezervasjonCard({ r }: { r: Rezervasyon }) {
+function RezervasjonCard({ r, onRefresh }: { r: Rezervasyon; onRefresh: () => void }) {
+  const router = useRouter();
   const st = statusConfig[r.status] ?? statusConfig.CONFIRMED;
   let photo = "";
   try { photo = JSON.parse(r.spot.photos)[0] ?? ""; } catch {}
 
-  const isActive = r.status === "CONFIRMED" && new Date(r.endDateTime) > new Date();
-  const isPast = r.status === "COMPLETED" || r.status === "CANCELLED" || new Date(r.endDateTime) <= new Date();
+  const now = new Date();
+  const isActive = r.status === "CONFIRMED" && new Date(r.startDateTime) <= now && new Date(r.endDateTime) > now;
+  const isUpcoming = r.status === "CONFIRMED" && new Date(r.startDateTime) > now;
+  const isPast = r.status === "COMPLETED" || r.status === "CANCELLED" || new Date(r.endDateTime) <= now;
   const needsSurvey = isPast && r.status !== "CANCELLED" && (!r.surveys || r.surveys.length === 0);
 
+  // Park uzatma state'i
+  const [showExtend, setShowExtend] = useState(false);
+  const [extraHours, setExtraHours] = useState(1);
+  const [extending, setExtending] = useState(false);
+  const [extendMsg, setExtendMsg] = useState("");
+
+  async function handleExtend() {
+    setExtending(true);
+    setExtendMsg("");
+    try {
+      const res = await fetch(`/api/rezervasyon/${r.id}/uzat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ extraHours }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setExtendMsg(data.error ?? "Bir hata oluştu.");
+      } else {
+        setExtendMsg(`✓ Süre uzatıldı! Yeni bitiş: ${formatDate(data.newEndDateTime)}`);
+        setTimeout(() => { setShowExtend(false); setExtendMsg(""); onRefresh(); }, 2000);
+      }
+    } catch {
+      setExtendMsg("Sunucu hatası.");
+    }
+    setExtending(false);
+  }
+
+  // spot fiyatı için pricePerHour gerekiyor — API'den gelmiyorsa 0
+  const pricePerHour = (r.spot as any).pricePerHour ?? 0;
+
   return (
-    <div className="relative group">
-      <Link
-        href={`/bilet/${r.id}`}
-        className="flex items-center gap-3 active:scale-[0.98] transition-transform"
+    <div className="relative">
+      {/* Ana kart */}
+      <div
+        className="flex items-center gap-3"
         style={{
           background: "rgba(255,255,255,0.82)",
           backdropFilter: "blur(16px)",
-          borderRadius: "20px",
+          borderRadius: showExtend ? "20px 20px 0 0" : "20px",
           border: "1px solid rgba(255,255,255,0.9)",
           boxShadow: "0 6px 20px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,1)",
           padding: "14px",
-          marginBottom: needsSurvey ? "4px" : "0",
         }}
       >
         {/* Thumbnail */}
-        <div style={{
-          width: 64, height: 64, borderRadius: "14px",
-          overflow: "hidden", background: "#e2e8f0", flexShrink: 0,
-        }}>
+        <div
+          onClick={() => router.push(`/bilet/${r.id}`)}
+          style={{ width: 64, height: 64, borderRadius: "14px", overflow: "hidden", background: "#e2e8f0", flexShrink: 0, cursor: "pointer" }}
+        >
           {photo
             ? <img src={photo} alt={r.spot.title} className="w-full h-full object-cover" />
             : <div className="w-full h-full flex items-center justify-center">
@@ -74,36 +109,88 @@ function RezervasjonCard({ r }: { r: Rezervasyon }) {
         </div>
 
         {/* Info */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0" onClick={() => router.push(`/bilet/${r.id}`)} style={{ cursor: "pointer" }}>
           <p className="font-bold text-slate-800 text-[13px] truncate">{r.spot.title}</p>
           <p className="text-slate-400 text-[10px] mt-0.5">{formatDate(r.startDateTime)} → {formatDate(r.endDateTime)}</p>
           <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-            <span style={{
-              background: st.bg, color: st.color,
-              borderRadius: "8px", padding: "2px 7px",
-              fontSize: "10px", fontWeight: 800,
-            }}>{st.label}</span>
+            <span style={{ background: st.bg, color: st.color, borderRadius: "8px", padding: "2px 7px", fontSize: "10px", fontWeight: 800 }}>{st.label}</span>
             <span className="text-slate-600 font-bold text-[11px]">₺{r.totalPrice}</span>
-            {isActive && (
-              <span style={{ background: "rgba(10,102,194,0.10)", color: "#0A66C2", borderRadius: "8px", padding: "2px 7px", fontSize: "10px", fontWeight: 800 }}>
-                ⏱ Aktif
-              </span>
-            )}
-            {r.surveys && r.surveys.length > 0 && (
-               <span style={{ background: "rgba(16,185,129,0.10)", color: "#10b981", borderRadius: "8px", padding: "2px 7px", fontSize: "10px", fontWeight: 800 }}>
-                 ⭐ Anketli
-               </span>
-            )}
+            {isActive && <span style={{ background: "rgba(10,102,194,0.10)", color: "#0A66C2", borderRadius: "8px", padding: "2px 7px", fontSize: "10px", fontWeight: 800 }}>⏱ Aktif</span>}
+            {r.surveys && r.surveys.length > 0 && <span style={{ background: "rgba(16,185,129,0.10)", color: "#10b981", borderRadius: "8px", padding: "2px 7px", fontSize: "10px", fontWeight: 800 }}>⭐ Anketli</span>}
           </div>
         </div>
 
-        {/* Arrow */}
-        <span className="material-symbols-outlined text-slate-300 shrink-0" style={{ fontSize: "20px" }}>chevron_right</span>
-      </Link>
+        {/* Uzat butonu (aktif veya yaklaşan rezervasyonlarda) */}
+        {(isActive || isUpcoming) && (
+          <button
+            onClick={() => setShowExtend(v => !v)}
+            className="shrink-0 active:scale-90 transition-transform"
+            style={{
+              background: showExtend ? "#0A66C2" : "rgba(10,102,194,0.10)",
+              color: showExtend ? "white" : "#0A66C2",
+              borderRadius: "12px",
+              padding: "8px 10px",
+              fontSize: "10px",
+              fontWeight: 800,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "2px",
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>more_time</span>
+            <span>Uzat</span>
+          </button>
+        )}
 
-      {/* Survey Button */}
-      {needsSurvey && (
-        <Link 
+        {/* Sadece detay oku için ok (uzat yoksa) */}
+        {!isActive && !isUpcoming && (
+          <span className="material-symbols-outlined text-slate-300 shrink-0" style={{ fontSize: "20px" }}>chevron_right</span>
+        )}
+      </div>
+
+      {/* Park Uzatma Paneli */}
+      {showExtend && (
+        <div style={{
+          background: "rgba(239,246,255,0.98)",
+          backdropFilter: "blur(16px)",
+          borderRadius: "0 0 20px 20px",
+          border: "1px solid rgba(10,102,194,0.15)",
+          borderTop: "none",
+          padding: "14px 16px",
+          boxShadow: "0 8px 20px rgba(10,102,194,0.10)",
+        }}>
+          <p className="text-[11px] font-bold text-[#0A66C2] mb-3">Kaç saat uzatmak istiyorsunuz?</p>
+          <div className="flex items-center gap-3 mb-3">
+            <button onClick={() => setExtraHours(h => Math.max(1, h - 1))}
+              className="w-9 h-9 rounded-full bg-white text-slate-600 font-black text-lg flex items-center justify-center active:scale-90 transition-transform shadow-sm">−</button>
+            <div className="flex-1 text-center">
+              <span className="font-black text-slate-800 text-2xl">{extraHours}</span>
+              <span className="text-slate-400 text-sm font-bold ml-1">saat</span>
+              {pricePerHour > 0 && (
+                <p className="text-[10px] text-slate-400 mt-0.5">≈ ₺{(extraHours * pricePerHour).toFixed(0)} ek ücret</p>
+              )}
+            </div>
+            <button onClick={() => setExtraHours(h => Math.min(12, h + 1))}
+              className="w-9 h-9 rounded-full bg-[#0A66C2] text-white font-black text-lg flex items-center justify-center active:scale-90 transition-transform shadow-sm">+</button>
+          </div>
+          {extendMsg && (
+            <p className={`text-[11px] font-semibold text-center mb-2 ${extendMsg.startsWith("✓") ? "text-emerald-600" : "text-red-500"}`}>{extendMsg}</p>
+          )}
+          <button
+            onClick={handleExtend}
+            disabled={extending}
+            className="w-full py-2.5 rounded-xl font-bold text-[13px] text-white active:scale-95 transition-transform disabled:opacity-60"
+            style={{ background: "linear-gradient(135deg,#0A66C2,#1e88e5)" }}
+          >
+            {extending ? "İşleniyor..." : `${extraHours} Saat Uzat`}
+          </button>
+        </div>
+      )}
+
+      {/* Anket Butonu */}
+      {needsSurvey && !showExtend && (
+        <Link
           href={`/anket/${r.id}`}
           className="flex items-center justify-center gap-1 mx-2 p-2 active:scale-95 transition-transform"
           style={{
@@ -126,11 +213,15 @@ export default function RezervasyonlarimPage() {
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<Tab>("aktif");
 
-  useEffect(() => {
+  const loadData = () => {
+    setLoading(true);
     fetch("/api/rezervasyon")
       .then(r => r.json())
-      .then(d => { setList(Array.isArray(d) ? d : []); setLoading(false); });
-  }, []);
+      .then(d => { setList(Array.isArray(d) ? d : []); setLoading(false); })
+      .catch(() => setLoading(false));
+  };
+
+  useEffect(() => { loadData(); }, []);
 
   const now = new Date();
 

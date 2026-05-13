@@ -17,7 +17,7 @@ export default function IlanEkleWizard() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    category: "bireysel",
+    category: "surucu",
     spotType: "acik",
     address: "",
     lat: "41.0151",
@@ -156,8 +156,8 @@ export default function IlanEkleWizard() {
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 block">Kategori</span>
                 <select value={formData.category} onChange={e => update("category", e.target.value)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-[#0A66C2] focus:ring-2 focus:ring-blue-100 text-sm font-semibold text-slate-700">
-                  <option value="bireysel">Bireysel</option>
-                  <option value="isletme">İşletme</option>
+                  <option value="surucu">Şahsi (Sürücü)</option>
+                  <option value="sahip">Ticari (Otopark Sahibi)</option>
                 </select>
               </label>
               <label className="block">

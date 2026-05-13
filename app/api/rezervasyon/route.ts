@@ -101,6 +101,22 @@ export async function POST(req: Request) {
     return res;
   });
 
+  // ── Anlık doluluk oranını güncelle ────────────────────────────────────────
+  const rightNow = new Date();
+  const activeNow = await prisma.reservation.count({
+    where: {
+      spotId,
+      status: { notIn: ["CANCELLED"] },
+      startDateTime: { lte: rightNow },
+      endDateTime:   { gt: rightNow },
+    },
+  });
+  await prisma.parkingSpot.update({
+    where: { id: spotId },
+    data: { occupancyRate: Math.min(1, activeNow / spot.totalCapacity) },
+  });
+  // ──────────────────────────────────────────────────────────────────────────
+
   return NextResponse.json(reservation, { status: 201 });
 }
 
@@ -124,6 +140,8 @@ export async function GET() {
           address: true,
           photos: true,
           pricePerHour: true,
+          lat: true,
+          lng: true,
         },
       },
       payment: true,

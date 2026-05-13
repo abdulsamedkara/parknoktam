@@ -16,7 +16,12 @@ interface DashboardData {
     vehiclePlate: string;
     totalPrice: number;
     status: string;
+    endDateTime: string;
+    surveys: { id: string, filledBy: string }[];
   }[];
+  monthlyRevenue: { month: string; revenue: number }[];
+  surveyStats: { totalReviews: number; avgRating: number; safePercent: number };
+  spotOccupancy: { id: string; title: string; occupancyRate: number; isActive: boolean; totalCapacity: number }[];
 }
 
 export default function PanelDashboard() {
@@ -103,10 +108,90 @@ export default function PanelDashboard() {
         <Link href="/panel/ilan-ekle" className="flex-1 text-center py-3 bg-[#0A2540] text-white rounded-xl font-bold text-sm shadow-lg shadow-slate-300">
           + İlan Ekle
         </Link>
-        <Link href="/panel/ilanlarim" className="flex-1 text-center py-3 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm shadow-sm hover:bg-slate-50 transition-colors">
+        <Link href="/profil" className="flex-1 text-center py-3 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm shadow-sm hover:bg-slate-50 transition-colors">
           Yönet
         </Link>
       </div>
+
+      {/* ── Gelir Grafiği (Son 6 Ay) ── */}
+      {data.monthlyRevenue && data.monthlyRevenue.some(m => m.revenue > 0) && (
+        <div className="mb-6" style={{ background: "white", borderRadius: "20px", padding: "20px", boxShadow: "0 4px 16px rgba(0,0,0,0.04)" }}>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <p className="font-bold text-slate-800 text-[15px]">Gelir Grafiği</p>
+              <p className="text-slate-400 text-[11px]">Son 6 ay</p>
+            </div>
+            <span className="material-symbols-outlined text-[#0A66C2]" style={{ fontSize: "22px", fontVariationSettings: "'FILL' 1" }}>bar_chart</span>
+          </div>
+          {(() => {
+            const maxRev = Math.max(...data.monthlyRevenue.map(m => m.revenue), 1);
+            return (
+              <div className="flex items-end gap-2 h-[100px]">
+                {data.monthlyRevenue.map((m, i) => (
+                  <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                    <span className="text-[9px] font-bold text-slate-500">
+                      {m.revenue > 0 ? `₺${m.revenue >= 1000 ? (m.revenue/1000).toFixed(1)+"K" : m.revenue}` : ""}
+                    </span>
+                    <div className="w-full relative" style={{ height: "70px", display: "flex", alignItems: "flex-end" }}>
+                      <div
+                        style={{
+                          width: "100%",
+                          height: `${Math.max(4, (m.revenue / maxRev) * 70)}px`,
+                          background: i === data.monthlyRevenue.length - 1
+                            ? "linear-gradient(180deg,#0A66C2,#1e88e5)"
+                            : "rgba(10,102,194,0.15)",
+                          borderRadius: "6px 6px 0 0",
+                        }}
+                      />
+                    </div>
+                    <span className="text-[9px] font-bold text-slate-400">{m.month}</span>
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
+        </div>
+      )}
+
+      {/* ── Anket Özeti ── */}
+      {data.surveyStats && data.surveyStats.totalReviews > 0 && (
+        <div className="grid grid-cols-3 gap-3 mb-6">
+          {[
+            { label: "Ort. Puan", val: `⭐ ${data.surveyStats.avgRating}`, color: "#d97706", bg: "rgba(217,119,6,0.08)" },
+            { label: "Değer. Sayısı", val: data.surveyStats.totalReviews, color: "#0A66C2", bg: "rgba(10,102,194,0.08)" },
+            { label: "Güvende Hissetti", val: `%${data.surveyStats.safePercent}`, color: "#059669", bg: "rgba(5,150,105,0.08)" },
+          ].map(c => (
+            <div key={c.label} style={{ background: c.bg, borderRadius: "16px", padding: "14px 10px", textAlign: "center" }}>
+              <p className="font-black text-lg" style={{ color: c.color }}>{c.val}</p>
+              <p className="text-[9px] font-bold text-slate-500 mt-0.5 leading-tight">{c.label}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ── Spot Doluluk ── */}
+      {data.spotOccupancy && data.spotOccupancy.length > 0 && (
+        <div className="mb-6" style={{ background: "white", borderRadius: "20px", padding: "18px", boxShadow: "0 4px 16px rgba(0,0,0,0.04)" }}>
+          <p className="font-bold text-slate-800 text-[15px] mb-3">Anlık Doluluk</p>
+          <div className="flex flex-col gap-3">
+            {data.spotOccupancy.map(s => {
+              const pct = Math.round(s.occupancyRate * 100);
+              const color = pct >= 80 ? "#ef4444" : pct >= 50 ? "#d97706" : "#059669";
+              return (
+                <div key={s.id}>
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-[12px] font-semibold text-slate-700 truncate max-w-[70%]">{s.title}</span>
+                    <span className="text-[11px] font-black" style={{ color }}>{pct}% dolu</span>
+                  </div>
+                  <div style={{ height: 6, background: "#f1f5f9", borderRadius: 99, overflow: "hidden" }}>
+                    <div style={{ width: `${pct}%`, height: "100%", background: color, borderRadius: 99, transition: "width 0.4s ease" }} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Recent Reservations */}
       <div className="mb-4 flex items-center justify-between">
@@ -120,31 +205,47 @@ export default function PanelDashboard() {
              <p className="text-slate-400 text-sm font-medium">Henüz bir rezervasyon görünmüyor.</p>
           </div>
         )}
-        {data.recentReservations.map(res => (
-          <div key={res.id} className="flex items-center justify-between p-4 bg-white rounded-[16px] border border-slate-100 shadow-[0_4px_12px_rgba(0,0,0,0.02)]">
-            <div className="flex items-center gap-3 w-3/5">
-              <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
-                <span className="material-symbols-outlined text-slate-500" style={{ fontSize: "18px" }}>confirmation_number</span>
-              </div>
-              <div className="min-w-0">
-                <p className="font-bold text-slate-800 text-[13px] truncate">{res.spotTitle}</p>
-                <div className="flex items-center gap-1.5 mt-0.5">
-                  <span className="text-slate-500 text-[11px] font-mono">{res.vehiclePlate}</span>
-                  <div className="w-1 h-1 bg-slate-300 rounded-full"/>
-                  <span className={
-                    res.status === "COMPLETED" ? "text-slate-400 text-[10px]" : 
-                    res.status === "CONFIRMED" ? "text-green-500 text-[10px] font-bold" : "text-amber-500 text-[10px] font-bold"
-                  }>
-                    {res.status}
-                  </span>
+        {data.recentReservations.map(res => {
+          const isPast = res.status === "COMPLETED" || new Date(res.endDateTime) <= new Date();
+          const needsSurvey = isPast && res.status !== "CANCELLED" && !res.surveys?.some(s => s.filledBy === "owner");
+
+          return (
+            <div key={res.id} className="flex flex-col bg-white rounded-[16px] border border-slate-100 shadow-[0_4px_12px_rgba(0,0,0,0.02)] overflow-hidden">
+              <div className="flex items-center justify-between p-4">
+                <div className="flex items-center gap-3 w-3/5">
+                  <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
+                    <span className="material-symbols-outlined text-slate-500" style={{ fontSize: "18px" }}>confirmation_number</span>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-bold text-slate-800 text-[13px] truncate">{res.spotTitle}</p>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <span className="text-slate-500 text-[11px] font-mono">{res.vehiclePlate}</span>
+                      <div className="w-1 h-1 bg-slate-300 rounded-full"/>
+                      <span className={
+                        res.status === "COMPLETED" ? "text-slate-400 text-[10px]" : 
+                        res.status === "CONFIRMED" ? "text-green-500 text-[10px] font-bold" : "text-amber-500 text-[10px] font-bold"
+                      }>
+                        {res.status}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right shrink-0">
+                  <p className="font-black text-slate-700 text-sm">₺{res.totalPrice}</p>
                 </div>
               </div>
+              {needsSurvey && (
+                <Link
+                  href={`/anket/sahip/${res.id}`}
+                  className="bg-amber-500 text-white text-xs font-bold py-2 px-4 flex items-center justify-center gap-1 active:bg-amber-600 transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[14px]">star</span>
+                  Sürücüyü Değerlendir, +10 Kredi
+                </Link>
+              )}
             </div>
-            <div className="text-right shrink-0">
-              <p className="font-black text-slate-700 text-sm">₺{res.totalPrice}</p>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
       </div>
     </div>

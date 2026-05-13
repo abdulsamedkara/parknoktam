@@ -20,6 +20,7 @@ export async function GET() {
         hasCCTV: true,
         hasEVCharger: true,
         isHandicapped: true,
+        hasGuard: true,
         photos: true,
         occupancyRate: true,
       },

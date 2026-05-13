@@ -102,7 +102,7 @@ export async function POST(req: Request) {
         address,
         lat: parseFloat(lat),
         lng: parseFloat(lng),
-        category: category || "bireysel",
+        category: category || "surucu",
         spotType: spotType || "acik",
         pricePerHour: parseFloat(pricePerHour),
         hasCCTV: !!hasCCTV,

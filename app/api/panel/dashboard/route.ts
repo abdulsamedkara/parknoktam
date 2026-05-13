@@ -24,8 +24,12 @@ export async function GET() {
           totalPrice: true,
           status: true,
           startDateTime: true,
+          endDateTime: true,
           vehiclePlate: true,
           createdAt: true,
+          surveys: {
+            select: { id: true, filledBy: true }
+          }
         },
         orderBy: {
           createdAt: "desc"
@@ -75,6 +79,54 @@ export async function GET() {
   // Sırala (bütün spotlardan alınan ortak liste)
   recentReservations.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
+  // ── Son 6 ay gelir grafiği ─────────────────────────────────────────────────
+  const MONTHS_TR = ["Oca","Şub","Mar","Nis","May","Haz","Tem","Ağu","Eyl","Eki","Kas","Ara"];
+  const monthlyRevenue: { month: string; revenue: number }[] = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const label = MONTHS_TR[d.getMonth()];
+    let rev = 0;
+    spots.forEach(spot => {
+      spot.reservations.forEach(res => {
+        if (res.status === "COMPLETED" || res.status === "CONFIRMED") {
+          const rd = new Date(res.createdAt);
+          if (rd.getMonth() === d.getMonth() && rd.getFullYear() === d.getFullYear()) {
+            rev += res.totalPrice;
+          }
+        }
+      });
+    });
+    monthlyRevenue.push({ month: label, revenue: Math.round(rev) });
+  }
+
+  // ── Anket özeti ───────────────────────────────────────────────────────────
+  const allSurveys = await prisma.survey.findMany({
+    where: {
+      reservation: { spot: { ownerId: user.id } },
+      filledBy: "tenant",
+    },
+    select: { overallRating: true, feltSafe: true, easyAccess: true },
+  });
+  const surveyStats = {
+    totalReviews: allSurveys.length,
+    avgRating: allSurveys.length
+      ? Math.round((allSurveys.reduce((s, r) => s + (r.overallRating ?? 0), 0) / allSurveys.length) * 10) / 10
+      : 0,
+    safePercent: allSurveys.length
+      ? Math.round((allSurveys.filter(r => r.feltSafe).length / allSurveys.length) * 100)
+      : 0,
+  };
+
+  // ── Spot doluluk listesi ──────────────────────────────────────────────────
+  const spotOccupancy = spots.map(s => ({
+    id: s.id,
+    title: s.title,
+    occupancyRate: s.occupancyRate,
+    isActive: s.isActive,
+    totalCapacity: s.totalCapacity,
+  }));
+  // ─────────────────────────────────────────────────────────────────────────
+
   return NextResponse.json({
     metrics: {
       totalRevenue,
@@ -83,5 +135,8 @@ export async function GET() {
       pendingIncoming,
     },
     recentReservations: recentReservations.slice(0, 5),
+    monthlyRevenue,
+    surveyStats,
+    spotOccupancy,
   }, { status: 200 });
 }

@@ -65,7 +65,7 @@ export default function LoginPage() {
         toast.error("Geçersiz e-posta veya şifre.");
       } else {
         toast.success("Hoş geldiniz!");
-        router.push("/hosgeldin");
+        router.push("/ana-sayfa");
       }
     } catch {
       toast.error("Bir hata oluştu.");
@@ -75,25 +75,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="auth-page auth-page--with-splash">
-      {/* Splash Screen */}
-      <div className="splash-screen">
-        <div className="splash-logo-box">
-          <IconParking />
-        </div>
-        <h1 className="splash-title">Park <span>Noktam</span></h1>
-        <div className="splash-line" />
-        <p className="splash-subtitle">Güvenli ve Hızlı Park Yeri Çözümü</p>
-
-        <div className="splash-dots">
-          <div className="splash-dot active" />
-          <div className="splash-dot" />
-          <div className="splash-dot" />
-        </div>
-
-        <div className="splash-footer">RELIABLE • MODERN • URBAN</div>
-      </div>
-
+    <div className="auth-page">
       {/* Animated Background */}
       <div className="auth-bg">
         <div className="orb orb-1" />
@@ -114,7 +96,7 @@ export default function LoginPage() {
       <div className="auth-card">
         <div className="auth-card-inner">
           <div className="auth-header">
-            <h1 className="auth-title">Tekrar Hoş Geldiniz</h1>
+            <h1 className="auth-title">Hoş Geldiniz</h1>
             <p className="auth-subtitle">Hesabınıza giriş yapın ve hemen park yeri bulun</p>
           </div>
 

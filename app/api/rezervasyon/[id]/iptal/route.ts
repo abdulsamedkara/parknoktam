@@ -31,6 +31,24 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       data: { status: "CANCELLED" }
     });
 
+    // İptal sonrası doluluk oranını güncelle
+    const rightNow = new Date();
+    const activeNow = await prisma.reservation.count({
+      where: {
+        spotId: reservation.spotId,
+        status: { notIn: ["CANCELLED"] },
+        startDateTime: { lte: rightNow },
+        endDateTime:   { gt: rightNow },
+      },
+    });
+    const spot = await prisma.parkingSpot.findUnique({ where: { id: reservation.spotId }, select: { totalCapacity: true } });
+    if (spot) {
+      await prisma.parkingSpot.update({
+        where: { id: reservation.spotId },
+        data: { occupancyRate: Math.min(1, activeNow / spot.totalCapacity) },
+      });
+    }
+
     return NextResponse.json({ success: true, reservation: updated }, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

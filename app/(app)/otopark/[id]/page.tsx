@@ -5,6 +5,7 @@ import "./otopark-detail.css";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import FavoriteButton from "./FavoriteButton";
+import ReviewsSection from "./ReviewsSection";
 
 const parsePhotos = (photosStr: string) => {
   try { return JSON.parse(photosStr); } catch { return []; }
@@ -99,6 +100,11 @@ export default async function OtoparkDetailPage({ params }: { params: Promise<{ 
               <span className="material-symbols-outlined" style={{fontSize:'18px'}}>accessible</span> Engelli
             </div>
           )}
+          {spot.hasGuard && (
+            <div className="f-badge-guard">
+              <span className="material-symbols-outlined" style={{fontSize:'18px', color:'#059669'}}>shield_person</span> Görevli Güvenlik
+            </div>
+          )}
         </div>
 
         {/* QUALITY STATS (Anket Verisinden) */}
@@ -178,11 +184,39 @@ export default async function OtoparkDetailPage({ params }: { params: Promise<{ 
           </div>
         )}
 
+        {/* Kullanıcı Yorumları */}
+        <ReviewsSection spotId={spot.id} />
+
       </div>
 
-      <div className="action-footer">
-        <Link href={`/rezervasyon/${spot.id}`} className="rent-btn">
-          Hemen Kirala (₺{spot.pricePerHour}/saat)
+      <div className="action-footer" style={{ display: "flex", gap: "10px" }}>
+        {/* Yol Tarifi Al */}
+        <a
+          href={`https://www.google.com/maps/dir/?api=1&destination=${spot.lat},${spot.lng}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "6px",
+            background: "rgba(10,102,194,0.10)",
+            border: "2px solid #0A66C2",
+            color: "#0A66C2",
+            borderRadius: "16px",
+            padding: "0 16px",
+            fontWeight: 800,
+            fontSize: "13px",
+            flexShrink: 0,
+            height: "52px",
+            whiteSpace: "nowrap",
+          }}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>navigation</span>
+          Yol Tarifi
+        </a>
+        <Link href={`/rezervasyon/${spot.id}`} className="rent-btn" style={{ flex: 1 }}>
+          Kirala (₺{spot.pricePerHour}/sa)
         </Link>
       </div>
     </div>

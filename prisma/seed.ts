@@ -37,6 +37,7 @@ async function main() {
       hasCCTV: true,
       hasEVCharger: false,
       isHandicapped: true,
+      hasGuard: true,
       rating: 4.7,
       reviewCount: 98,
       photos: generatePhotoArr(),
@@ -53,6 +54,7 @@ async function main() {
       hasCCTV: true,
       hasEVCharger: true,
       isHandicapped: true,
+      hasGuard: true,
       rating: 4.5,
       reviewCount: 210,
       photos: generatePhotoArr(),
@@ -69,13 +71,14 @@ async function main() {
       hasCCTV: false,
       hasEVCharger: false,
       isHandicapped: false,
+      hasGuard: false,
       rating: 4.9,
       reviewCount: 22,
       photos: generatePhotoArr(),
     },
     {
       title: "Rize Devlet Hastanesi Yanı Park",
-      description: "Hastane ziyaretçileri ve yakın esnaf için uygun fiyatlı açık otopark alanı.",
+      description: "Hastane ziyaretçileri ve yakın esnaf için uygun fiyatlı açık otopark alanı. Gündüz güvenlik görevlisi mevcuttur.",
       address: "Bahçelievler Mah. Hastane Cad. No: 5, Rize",
       lat: 41.0175,
       lng: 40.5200,
@@ -85,6 +88,7 @@ async function main() {
       hasCCTV: true,
       hasEVCharger: false,
       isHandicapped: true,
+      hasGuard: true,
       rating: 4.3,
       reviewCount: 67,
       photos: generatePhotoArr(),
@@ -101,22 +105,24 @@ async function main() {
       hasCCTV: true,
       hasEVCharger: true,
       isHandicapped: false,
+      hasGuard: true,
       rating: 4.8,
       reviewCount: 41,
       photos: generatePhotoArr(),
     },
     {
       title: "Recep Tayyip Erdoğan Üniversitesi Park Alanı",
-      description: "RTEÜ kampüsü yakınında, öğrenci ve akademisyenler için uygun fiyatlı park noktası.",
+      description: "RTEÜ kampüsü yakınında, öğrenci ve akademisyenler için uygun fiyatlı park noktası. Kampüs güvenliği 24 saat aktif.",
       address: "Zihni Derin Kampüsü, Merkez, Rize",
       lat: 41.0155,
       lng: 40.5180,
       category: "bireysel",
       spotType: "acik",
       pricePerHour: 15.0,
-      hasCCTV: false,
+      hasCCTV: true,
       hasEVCharger: false,
       isHandicapped: false,
+      hasGuard: true,
       rating: 4.2,
       reviewCount: 33,
       photos: generatePhotoArr(),
@@ -137,6 +143,20 @@ async function main() {
         }
       });
       console.log(`Created spot: ${spot.title}`);
+    } else {
+      // Mevcut spotları da güncelle (özellikler değişmiş olabilir)
+      await prisma.parkingSpot.update({
+        where: { id: existing.id },
+        data: {
+          hasCCTV: spot.hasCCTV,
+          hasEVCharger: spot.hasEVCharger,
+          isHandicapped: spot.isHandicapped,
+          hasGuard: spot.hasGuard,
+          rating: spot.rating,
+          reviewCount: spot.reviewCount,
+        }
+      });
+      console.log(`Updated spot: ${spot.title}`);
     }
   }
 

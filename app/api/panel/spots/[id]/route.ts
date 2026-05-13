@@ -57,6 +57,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         hasCCTV:      data.hasCCTV      !== undefined ? !!data.hasCCTV            : spot.hasCCTV,
         hasEVCharger: data.hasEVCharger !== undefined ? !!data.hasEVCharger       : spot.hasEVCharger,
         isHandicapped:data.isHandicapped!== undefined ? !!data.isHandicapped      : spot.isHandicapped,
+        photos:       data.photos       !== undefined ? data.photos               : spot.photos,
       }
     });
 
