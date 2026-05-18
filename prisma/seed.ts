@@ -105,7 +105,7 @@ async function main() {
       hasGuard: false,
       rating: 5.0,
       reviewCount: 4,
-      photos: generatePhotoArr(),
+      photos: JSON.stringify(["/emine_hanim.png"]),
     },
     {
       title: "Ahmet Bey'in Garajı",
@@ -122,7 +122,7 @@ async function main() {
       hasGuard: false,
       rating: 4.8,
       reviewCount: 12,
-      photos: generatePhotoArr(),
+      photos: JSON.stringify(["/ahmet_bey.png"]),
     },
     {
       title: "Fener Mahallesi Site Otoparkı",
@@ -195,6 +195,7 @@ async function main() {
           rating: spot.rating,
           reviewCount: spot.reviewCount,
           ownerId: targetOwnerId,
+          photos: spot.photos,
         }
       });
       console.log(`Updated spot: ${spot.title}`);
