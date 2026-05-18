@@ -199,6 +199,12 @@ async function main() {
       await prisma.parkingSpot.update({
         where: { id: existing.id },
         data: {
+          lat: spot.lat,
+          lng: spot.lng,
+          address: spot.address,
+          pricePerHour: spot.pricePerHour,
+          spotType: spot.spotType,
+          category: spot.category,
           hasCCTV: spot.hasCCTV,
           hasEVCharger: spot.hasEVCharger,
           isHandicapped: spot.isHandicapped,
