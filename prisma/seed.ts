@@ -92,7 +92,7 @@ async function main() {
     },
     {
       title: "Emine Hanım'ın Otoparkı",
-      description: "Hastaneye yürüyerek 1 dakika mesafede, güvenli, kapalı bireysel otopark alanı.",
+      description: "Hastaneye yürüyerek 1 dakika mesafede, güvenli, kapalı bireysel otopark alanı. Elektrikli araç şarj istasyonu mevcuttur.",
       address: "Eminettin Mah. Hastane Arkası Sok. No: 12, Rize",
       lat: 41.0298,
       lng: 40.5125,
@@ -100,12 +100,12 @@ async function main() {
       spotType: "kapali",
       pricePerHour: 35.0,
       hasCCTV: true,
-      hasEVCharger: false,
+      hasEVCharger: true,
       isHandicapped: false,
       hasGuard: false,
       rating: 5.0,
       reviewCount: 4,
-      photos: JSON.stringify(["/emine_hanim.jpeg"]),
+      photos: JSON.stringify(["/emine_hanim.jpg"]),
     },
     {
       title: "Ahmet Bey'in Garajı",
