@@ -30,9 +30,11 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
         />
       </head>
-      <body>
+      <body className="bg-slate-100">
         <Providers>
-          {children}
+          <div className="mx-auto max-w-[480px] w-full min-h-[100dvh] bg-[#fdfdfd] relative shadow-2xl sm:border-x border-slate-200/60 overflow-x-hidden">
+            {children}
+          </div>
           <Toaster
             position="top-center"
             toastOptions={{

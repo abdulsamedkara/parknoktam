@@ -16,7 +16,7 @@ export default function BottomNav() {
   return (
     <>
       <nav
-        className="fixed bottom-0 left-0 w-full flex justify-around items-end px-2 pb-6 pt-2"
+        className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] flex justify-around items-end px-2 pb-6 pt-2"
         style={{
           zIndex: 1000,
           background: "rgba(255,255,255,0.72)",

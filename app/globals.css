@@ -65,7 +65,7 @@ body {
    SPLASH SCREEN
    ============================================ */
 .splash-screen {
-  position: fixed;
+  position: absolute;
   inset: 0;
   background: #fdfdfd;
   z-index: 100;
@@ -167,7 +167,7 @@ h1.splash-title span {
    ANIMATED BACKGROUND
    ============================================ */
 .auth-bg {
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 0;
   background: radial-gradient(ellipse at 50% 0%, #ffffff 0%, #f1f5f9 100%);
