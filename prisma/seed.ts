@@ -105,7 +105,7 @@ async function main() {
       hasGuard: false,
       rating: 5.0,
       reviewCount: 4,
-      photos: JSON.stringify(["/emine_hanim.png"]),
+      photos: JSON.stringify(["/emine_hanim.jpeg"]),
     },
     {
       title: "Ahmet Bey'in Garajı",
@@ -122,7 +122,7 @@ async function main() {
       hasGuard: false,
       rating: 4.8,
       reviewCount: 12,
-      photos: JSON.stringify(["/ahmet_bey.png"]),
+      photos: JSON.stringify(["/ahmet_bey.jpeg"]),
     },
     {
       title: "Fener Mahallesi Site Otoparkı",
