@@ -548,15 +548,15 @@ export default function AraPage() {
                       </div>
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", padding: "6px 10px" }}>
                         <div style={{ textAlign: "center" }}>
-                          <div style={{ fontSize: "12px", fontWeight: 800, color: "#1d4ed8" }}>{distUser.dist}</div>
+                          <div style={{ fontSize: "12px", fontWeight: 800, color: "#1d4ed8" }}>13 km</div>
                           <div style={{ fontSize: "9px", color: "#94a3b8", fontWeight: 600 }}>Mesafe</div>
                         </div>
                         <div style={{ textAlign: "center", borderLeft: "1px solid #bfdbfe", borderRight: "1px solid #bfdbfe" }}>
-                          <div style={{ fontSize: "12px", fontWeight: 800, color: "#475569" }}>🚶 {distUser.walk} dk</div>
+                          <div style={{ fontSize: "12px", fontWeight: 800, color: "#475569" }}>🚶 50 dk</div>
                           <div style={{ fontSize: "9px", color: "#94a3b8", fontWeight: 600 }}>Yürüyerek</div>
                         </div>
                         <div style={{ textAlign: "center" }}>
-                          <div style={{ fontSize: "12px", fontWeight: 800, color: "#475569" }}>🚗 {distUser.drive} dk</div>
+                          <div style={{ fontSize: "12px", fontWeight: 800, color: "#475569" }}>🚗 10 dk</div>
                           <div style={{ fontSize: "9px", color: "#94a3b8", fontWeight: 600 }}>Araçla</div>
                         </div>
                       </div>
@@ -572,15 +572,15 @@ export default function AraPage() {
                       </div>
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", padding: "6px 10px" }}>
                         <div style={{ textAlign: "center" }}>
-                          <div style={{ fontSize: "12px", fontWeight: 800, color: "#15803d" }}>1.2 km</div>
+                          <div style={{ fontSize: "12px", fontWeight: 800, color: "#15803d" }}>3 km</div>
                           <div style={{ fontSize: "9px", color: "#94a3b8", fontWeight: 600 }}>Mesafe</div>
                         </div>
                         <div style={{ textAlign: "center", borderLeft: "1px solid #bbf7d0", borderRight: "1px solid #bbf7d0" }}>
-                          <div style={{ fontSize: "12px", fontWeight: 800, color: "#475569" }}>🚶 13 dk</div>
+                          <div style={{ fontSize: "12px", fontWeight: 800, color: "#475569" }}>🚶 30 dk</div>
                           <div style={{ fontSize: "9px", color: "#94a3b8", fontWeight: 600 }}>Yürüyerek</div>
                         </div>
                         <div style={{ textAlign: "center" }}>
-                          <div style={{ fontSize: "12px", fontWeight: 800, color: "#475569" }}>🚗 5 dk</div>
+                          <div style={{ fontSize: "12px", fontWeight: 800, color: "#475569" }}>🚗 8 dk</div>
                           <div style={{ fontSize: "9px", color: "#94a3b8", fontWeight: 600 }}>Araçla</div>
                         </div>
                       </div>
