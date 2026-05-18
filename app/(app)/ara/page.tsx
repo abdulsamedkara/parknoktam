@@ -546,16 +546,12 @@ export default function AraPage() {
                         <span className="material-symbols-outlined" style={{ fontSize: "11px" }}>my_location</span>
                         Konumunuz → Park Yeri
                       </div>
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", padding: "6px 10px" }}>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", padding: "6px 10px" }}>
                         <div style={{ textAlign: "center" }}>
                           <div style={{ fontSize: "12px", fontWeight: 800, color: "#1d4ed8" }}>13 km</div>
                           <div style={{ fontSize: "9px", color: "#94a3b8", fontWeight: 600 }}>Mesafe</div>
                         </div>
-                        <div style={{ textAlign: "center", borderLeft: "1px solid #bfdbfe", borderRight: "1px solid #bfdbfe" }}>
-                          <div style={{ fontSize: "12px", fontWeight: 800, color: "#475569" }}>🚶 50 dk</div>
-                          <div style={{ fontSize: "9px", color: "#94a3b8", fontWeight: 600 }}>Yürüyerek</div>
-                        </div>
-                        <div style={{ textAlign: "center" }}>
+                        <div style={{ textAlign: "center", borderLeft: "1px solid #bfdbfe" }}>
                           <div style={{ fontSize: "12px", fontWeight: 800, color: "#475569" }}>🚗 10 dk</div>
                           <div style={{ fontSize: "9px", color: "#94a3b8", fontWeight: 600 }}>Araçla</div>
                         </div>
