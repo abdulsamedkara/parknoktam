@@ -62,12 +62,8 @@ export default function AraPage() {
   const [flyTo, setFlyTo] = useState<{lat: number, lng: number, zoom?: number} | null>(null);
 
   useEffect(() => {
-    // Kullanıcının GPS konumunu sadece mesafe hesabı için al; searchCenter'a atma
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((pos) => {
-        setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-      });
-    }
+    // Demo için canlı konum kapatıldı, sabit konum atandı.
+    setUserLocation({ lat: 41.035424, lng: 40.561674 });
   }, []);
 
   useEffect(() => {
@@ -572,19 +568,19 @@ export default function AraPage() {
                     <div style={{ background: "#f0fdf4", borderRadius: "12px", border: "1px solid #bbf7d0", overflow: "hidden" }}>
                       <div style={{ padding: "5px 10px 3px", fontSize: "9px", fontWeight: 700, color: "#15803d", borderBottom: "1px solid #bbf7d0", display: "flex", alignItems: "center", gap: "4px" }}>
                         <span className="material-symbols-outlined" style={{ fontSize: "11px" }}>location_on</span>
-                        {geocodeLabel ?? "Seçilen Konum"} → Park Yeri
+                        {geocodeLabel ?? "Park Yeri"} → Seçilen Konumlar (Hastane, Belediye Binası, AVM)
                       </div>
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", padding: "6px 10px" }}>
                         <div style={{ textAlign: "center" }}>
-                          <div style={{ fontSize: "12px", fontWeight: 800, color: "#15803d" }}>{distDest.dist}</div>
+                          <div style={{ fontSize: "12px", fontWeight: 800, color: "#15803d" }}>1.2 km</div>
                           <div style={{ fontSize: "9px", color: "#94a3b8", fontWeight: 600 }}>Mesafe</div>
                         </div>
                         <div style={{ textAlign: "center", borderLeft: "1px solid #bbf7d0", borderRight: "1px solid #bbf7d0" }}>
-                          <div style={{ fontSize: "12px", fontWeight: 800, color: "#475569" }}>🚶 {distDest.walk} dk</div>
+                          <div style={{ fontSize: "12px", fontWeight: 800, color: "#475569" }}>🚶 13 dk</div>
                           <div style={{ fontSize: "9px", color: "#94a3b8", fontWeight: 600 }}>Yürüyerek</div>
                         </div>
                         <div style={{ textAlign: "center" }}>
-                          <div style={{ fontSize: "12px", fontWeight: 800, color: "#475569" }}>🚗 {distDest.drive} dk</div>
+                          <div style={{ fontSize: "12px", fontWeight: 800, color: "#475569" }}>🚗 5 dk</div>
                           <div style={{ fontSize: "9px", color: "#94a3b8", fontWeight: 600 }}>Araçla</div>
                         </div>
                       </div>
